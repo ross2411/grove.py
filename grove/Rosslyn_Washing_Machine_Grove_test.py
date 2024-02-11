@@ -1,12 +1,20 @@
 import time
+from datetime import datetime, timedelta
 from grove.grove_water_sensor import GroveWaterSensor
 import requests
 
-
-
+notify = False
+lastNotified = None
 
 def Average(lst):
     return sum(lst) /len(lst)
+
+def ShouldNotify(notifyFlag, lastNotified):
+    if (lastNotified is None):
+        return notifyFlag
+    
+    nextTimeToNotify = lastNotified + timedelta(minutes=30)
+    return notifyFlag & datetime.now() > nextTimeToNotify
 
 PIN = 2
 sensor = GroveWaterSensor(PIN)
@@ -25,7 +33,8 @@ while True:
     avg = Average(queue)
     if (avg < 500):
         print(f"Major water leak detected!!!!")
-        requests.post("https://ntfy.sh/rosslynwashingleak",
-        data=f"Water leak detect behind the washing machine.  Average reading {avg}".encode(encoding='utf-8'))
-        exit(0)
+        if (ShouldNotify(notify, lastNotified)):
+            requests.post("https://ntfy.sh/rosslynwashingleak",
+                data=f"Water leak detect behind the washing machine.  Average reading {avg}".encode(encoding='utf-8'))
+            lastNotified = datetime.now()
     time.sleep(.1)
