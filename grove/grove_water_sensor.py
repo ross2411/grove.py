@@ -29,7 +29,7 @@ Examples:
             else:
                 print("{}, Dry.".format(value))
 
-            time.sleep(.1)
+            time.sleep(.)1
 '''
 import time, sys, math
 from grove.adc import ADC
