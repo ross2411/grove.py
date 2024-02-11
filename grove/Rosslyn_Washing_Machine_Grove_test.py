@@ -36,9 +36,9 @@ while True:
         print(f"Major water leak detected!!!!")
         if (ShouldNotify(notify, lastNotified)):
             print(f"Sending notification")
-            # requests.post("https://ntfy.sh/rosslynwashingleak",
-            #     data=f"Water leak detect behind the washing machine.  Average reading {avg}".encode(encoding='utf-8'))
+            requests.post("https://ntfy.sh/rosslynwashingleak",
+                data=f"Water leak detect behind the washing machine.  Average reading {avg}".encode(encoding='utf-8'))
             lastNotified = datetime.now()
         else:
             print(f"NOT sending notification")
-    time.sleep(.1)
+    time.sleep(1)
