@@ -15,7 +15,7 @@ while True:
     else:
         print("{}, Dry.".format(value))
     queue.append(value)
-    if (len(queue) > 5):
+    if (len(queue) > 10):
         queue.pop(0)
 
     avg = Average(queue)
