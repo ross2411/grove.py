@@ -2,8 +2,9 @@ import time
 from datetime import datetime, timedelta
 from grove.grove_water_sensor import GroveWaterSensor
 import requests
+import rosslyn_config as config
 
-notify = False
+notify = config.notify
 lastNotified = None
 
 def Average(lst):
@@ -14,7 +15,7 @@ def ShouldNotify(notifyFlag, lastNotified):
         return notifyFlag
     
     nextTimeToNotify = lastNotified + timedelta(minutes=30)
-    return notifyFlag & datetime.now() > nextTimeToNotify
+    return notifyFlag & (datetime.now() > nextTimeToNotify)
 
 PIN = 2
 sensor = GroveWaterSensor(PIN)
@@ -34,7 +35,10 @@ while True:
     if (avg < 500):
         print(f"Major water leak detected!!!!")
         if (ShouldNotify(notify, lastNotified)):
-            requests.post("https://ntfy.sh/rosslynwashingleak",
-                data=f"Water leak detect behind the washing machine.  Average reading {avg}".encode(encoding='utf-8'))
+            print(f"Sending notification")
+            # requests.post("https://ntfy.sh/rosslynwashingleak",
+            #     data=f"Water leak detect behind the washing machine.  Average reading {avg}".encode(encoding='utf-8'))
             lastNotified = datetime.now()
+        else:
+            print(f"NOT sending notification")
     time.sleep(.1)
