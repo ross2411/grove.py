@@ -1,5 +1,9 @@
-import time, sys, math
+import time
 from grove.grove_water_sensor import GroveWaterSensor
+import requests
+
+
+
 
 def Average(lst):
     return sum(lst) /len(lst)
@@ -10,7 +14,7 @@ queue = []
 print('Detecting ...')
 while True:
     value = sensor.value
-    if sensor.value < 500:
+    if value < 500:
         print("{}, Detected Water.".format(value))
     else:
         print("{}, Dry.".format(value))
@@ -21,5 +25,7 @@ while True:
     avg = Average(queue)
     if (avg < 500):
         print(f"Major water leak detected!!!!")
+        requests.post("https://ntfy.sh/rosslynwashingleak",
+        data=f"Water leak detect behind the washing machine.  Average reading {avg}".encode(encoding='utf-8'))
         exit(0)
     time.sleep(.1)
